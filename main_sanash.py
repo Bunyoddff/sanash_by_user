@@ -19,10 +19,26 @@ def bronnarsa_qaytaradi(update: Update, context: CallbackContext):
 def rasm_qaytar(update:Update, context:CallbackContext):
 
     rasm_manzili=update.message.photo[-1].file_id
-    tugma1 = InlineKeyboardButton(text=f"Do you like 👍{sana_like['like']} ",callback_data=1)
-    tugma2 = InlineKeyboardButton(text=f"Do you dislike 👎 {sana_like['dislike']}",callback_data=1)
+    tugma1 = InlineKeyboardButton(text=f"Do you like👍{sana_like['like']}",callback_data='👍')
+    tugma2 = InlineKeyboardButton(text=f"Or dislike 👎 {sana_like['dislike']}",callback_data='👎')
     inline_keyboard = InlineKeyboardMarkup([[tugma1,tugma2]])
     update.message.reply_photo(photo=rasm_manzili,reply_markup=inline_keyboard)
+def tugama_bosilsa(update:Update, context:CallbackContext):
+    query_malumot = update.callback_query
+    query_malumot.answer()
+    if query_malumot.data == '👍':
+        sana_like["like"] += 1
+        
+    elif query_malumot.data == '👎':
+        sana_like["dislike"] += 1
+    
+    tugma1 = InlineKeyboardButton(text=f"Do you like👍{sana_like['like']}",callback_data='👍')
+    tugma2 = InlineKeyboardButton(text=f"Or dislike 👎 {sana_like['dislike']}",callback_data='👎')
+    inline_keyboard = InlineKeyboardMarkup([[tugma1,tugma2]])
+    query_malumot.edit_message_reply_markup(reply_markup=inline_keyboard)
+
+
+
 
 
 # def likedislike(update: Update, context: CallbackContext):
@@ -40,6 +56,7 @@ dispatcher = updater.dispatcher
 dispatcher.add_handler(CommandHandler('start', bronnarsa_qaytaradi))
 #dispatcher.add_handler(CommandHandler('info',info))
 dispatcher.add_handler(MessageHandler(Filters.photo,rasm_qaytar))
+dispatcher.add_handler(CallbackQueryHandler(tugama_bosilsa))
 
 # Start the bot
 updater.start_polling()
